@@ -22,7 +22,7 @@ public class TruthTable {
 
     static void printTruthTable() {
         System.out.println();
-        System.out.println("Truth table (statement value in each world; not yet a solution)");
+        System.out.println("Truth table");
         System.out.printf("    %-4s %-4s %-8s %-8s%n", "A", "B", "A stmt", "B stmt");
         for (int i = 0; i < 4; i++) {
             String saysA = Input.speakerA ? tf(table[i][0]) : "-";
