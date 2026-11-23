@@ -5,22 +5,7 @@ public class Verdict {
     public static void highlightValidSolutions(boolean[][] table, boolean aSpeaks, boolean bSpeaks) {
         System.out.println();
         System.out.println("Truth table with solutions highlighted");
-        System.out.printf("    %-4s %-4s %-8s %-8s %-9s%n", "A", "B", "A stmt", "B stmt", "Matches?");
-        for (int i = 0; i < 4; i++) {
-            boolean valid = table[i][2];
-            String marker = valid ? ">>> " : "    ";
-            String note = valid ? "  <== SOLUTION" : "";
-            String saysA = aSpeaks ? tf(table[i][0]) : "-";
-            String saysB = bSpeaks ? tf(table[i][1]) : "-";
-            System.out.printf("%s%-4s %-4s %-8s %-8s %-9s%s%n",
-                    marker,
-                    tf(aKnight(i)),
-                    tf(bKnight(i)),
-                    saysA,
-                    saysB,
-                    valid ? "YES" : "no",
-                    note);
-        }
+        TruthTable.printTable(true, table);
     }
 
     public static void printVerdict(boolean[][] table) {
@@ -63,9 +48,5 @@ public class Verdict {
 
     private static boolean bKnight(int row) {
         return row % 2 == 1;
-    }
-
-    private static String tf(boolean value) {
-        return value ? "T" : "F";
     }
 }

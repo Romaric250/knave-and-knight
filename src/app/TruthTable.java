@@ -1,8 +1,10 @@
 package app;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class TruthTable {
 
-    // Columns: A says, B says, valid, unused.
     static boolean[][] table = new boolean[4][4];
 
     static void buildTruthTable() {
@@ -23,16 +25,97 @@ public class TruthTable {
     static void printTruthTable() {
         System.out.println();
         System.out.println("Truth table");
-        System.out.printf("    %-4s %-4s %-8s %-8s%n", "A", "B", "A stmt", "B stmt");
+        printTable(false, null);
+    }
+
+    static void printTable(boolean showMatch, boolean[][] source) {
+        boolean[][] data = source != null ? source : table;
+        String header = buildHeader(showMatch);
+        System.out.println(header);
         for (int i = 0; i < 4; i++) {
-            String saysA = Input.speakerA ? tf(table[i][0]) : "-";
-            String saysB = Input.speakerB ? tf(table[i][1]) : "-";
-            System.out.printf("    %-4s %-4s %-8s %-8s%n",
-                    tf(i >= 2),
-                    tf(i % 2 == 1),
-                    saysA,
-                    saysB);
+            boolean valid = showMatch && data[i][2];
+            System.out.println(buildRow(i, showMatch, valid, data));
         }
+    }
+
+    static String buildHeader(boolean showMatch) {
+        StringBuilder line = new StringBuilder("    ");
+        line.append(pad("A", 4)).append(pad("B", 4));
+        if (Input.speakerA) {
+            for (String part : stmtParts(Input.statementA)) {
+                line.append(pad(part, 8));
+            }
+            line.append(pad(stmtColumnHeader(Input.statementA), 8));
+        }
+        if (Input.speakerB) {
+            for (String part : stmtParts(Input.statementB)) {
+                line.append(pad(part, 8));
+            }
+            line.append(pad(stmtColumnHeader(Input.statementB), 8));
+        }
+        if (showMatch) {
+            line.append(pad("Matches?", 9));
+        }
+        return line.toString();
+    }
+
+    static String buildRow(int row, boolean showMatch, boolean valid, boolean[][] data) {
+        boolean aKnight = row >= 2;
+        boolean bKnight = row % 2 == 1;
+        StringBuilder line = new StringBuilder();
+        if (showMatch && valid) {
+            line.append(">>> ");
+        } else {
+            line.append("    ");
+        }
+        line.append(pad(tf(aKnight), 4)).append(pad(tf(bKnight), 4));
+        if (Input.speakerA) {
+            for (String part : stmtParts(Input.statementA)) {
+                line.append(pad(tf(evalAtom(part, aKnight, bKnight)), 8));
+            }
+            line.append(pad(tf(data[row][0]), 8));
+        }
+        if (Input.speakerB) {
+            for (String part : stmtParts(Input.statementB)) {
+                line.append(pad(tf(evalAtom(part, aKnight, bKnight)), 8));
+            }
+            line.append(pad(tf(data[row][1]), 8));
+        }
+        if (showMatch) {
+            line.append(pad(valid ? "YES" : "no", 9));
+            if (valid) {
+                line.append("  <== SOLUTION");
+            }
+        }
+        return line.toString();
+    }
+
+    static String stmtColumnHeader(String raw) {
+        if (raw == null || raw.isEmpty()) {
+            return "";
+        }
+        return raw;
+    }
+
+    static List<String> stmtParts(String raw) {
+        List<String> parts = new ArrayList<>();
+        if (raw == null || raw.isEmpty()) {
+            return parts;
+        }
+        String[] atoms = raw.split("[nv]", -1);
+        if (atoms.length > 1) {
+            for (String atom : atoms) {
+                parts.add(atom);
+            }
+        }
+        return parts;
+    }
+
+    static String pad(String text, int width) {
+        if (text.length() >= width) {
+            return text.substring(0, width);
+        }
+        return String.format("%-" + width + "s", text);
     }
 
     static void markValidRows() {
