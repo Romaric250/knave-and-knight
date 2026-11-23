@@ -5,7 +5,7 @@ public class Verdict {
     public static void highlightValidSolutions(boolean[][] table, boolean aSpeaks, boolean bSpeaks) {
         System.out.println();
         System.out.println("Truth table with solutions highlighted");
-        System.out.printf("    %-4s %-4s %-8s %-8s %-9s%n", "A", "B", "A says", "B says", "Matches?");
+        System.out.printf("    %-4s %-4s %-8s %-8s %-9s%n", "A", "B", "A stmt", "B stmt", "Matches?");
         for (int i = 0; i < 4; i++) {
             boolean valid = table[i][2];
             String marker = valid ? ">>> " : "    ";
