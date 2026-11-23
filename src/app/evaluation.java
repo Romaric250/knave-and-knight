@@ -1,27 +1,26 @@
-public static evaluation{
+package app;
+
+public class Evaluation {
     public static boolean evaluateSolution(
-        boolean aIsKnight,
-        boolean bIsKnight,
-        boolean aSpeaks,
-        boolean aStatementTruth,
-        boolean bSpeaks,
-        boolean bStatementTruth) {
+            boolean aIsKnight,
+            boolean bIsKnight,
+            boolean aSpeaks,
+            boolean aStatementTruth,
+            boolean bSpeaks,
+            boolean bStatementTruth) {
 
-    // Check Person A
-    boolean aValid = true;
+        boolean aValid = true;
 
-    if (aSpeaks) {
-        aValid = (aIsKnight == aStatementTruth);
+        if (aSpeaks) {
+            aValid = (aIsKnight == aStatementTruth);
+        }
+
+        boolean bValid = true;
+
+        if (bSpeaks) {
+            bValid = (bIsKnight == bStatementTruth);
+        }
+
+        return aValid && bValid;
     }
-
-    // Check Person B
-    boolean bValid = true;
-
-    if (bSpeaks) {
-        bValid = (bIsKnight == bStatementTruth);
-    }
-
-    // The row is a solution only if all speakers are consistent
-    return aValid && bValid;
-}
 }
