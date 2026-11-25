@@ -159,7 +159,7 @@ public class TruthTable {
         return true;
     }
 
-    // IFF is implication: left IFF right means !left OR right
+    // IFF is implication
     static boolean evalImp(String part, boolean aKnight, boolean bKnight) {
         int idx = part.indexOf("IFF");
         if (idx < 0) {

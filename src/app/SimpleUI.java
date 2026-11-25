@@ -12,163 +12,208 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.JTextPane;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 
 public class SimpleUI {
 
-    static final Color BG = new Color(18, 22, 40);
-    static final Color PANEL = new Color(28, 34, 58);
-    static final Color FIELD = new Color(22, 28, 48);
-    static final Color TEXT = new Color(220, 228, 245);
-    static final Color MUTED = new Color(140, 155, 190);
-    static final Color GOLD = new Color(255, 200, 90);
-    static final Color CYAN = new Color(100, 220, 255);
-    static final Color TERMINAL = new Color(120, 255, 180);
+    static final Color BG = new Color(0x1A1A1A);
+    static final Color GOLD = new Color(0xD4AF37);
+    static final Color FIELD_BG = new Color(0x242424);
+    static final Color GREEN = new Color(0x33CC66);
+    static final Color RED = new Color(0xCC4444);
+    static final Color ORANGE = new Color(0xE8A030);
 
     public static void open() {
         SwingUtilities.invokeLater(SimpleUI::build);
     }
 
     static void build() {
-        JFrame frame = new JFrame("Knave & Knight — Arcade");
+        JFrame frame = new JFrame("Knights and Knaves");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        JPanel root = new JPanel(new BorderLayout(0, 12));
+        JPanel root = new JPanel(new BorderLayout(0, 0));
         root.setBackground(BG);
-        root.setBorder(BorderFactory.createEmptyBorder(14, 16, 14, 16));
+        root.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createMatteBorder(3, 0, 0, 0, GOLD),
+                BorderFactory.createEmptyBorder(12, 20, 16, 20)));
 
-        JPanel form = new JPanel(new GridLayout(4, 2, 10, 10));
-        form.setBackground(PANEL);
-        form.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(GOLD, 2),
-                BorderFactory.createEmptyBorder(12, 12, 12, 12)));
+        JLabel header = new JLabel("KNIGHTS AND KNAVES");
+        header.setForeground(GOLD);
+        header.setFont(new Font(Font.SERIF, Font.BOLD, 22));
+        header.setBorder(BorderFactory.createEmptyBorder(0, 0, 14, 0));
+        root.add(header, BorderLayout.NORTH);
 
-        JComboBox<String> who = new JComboBox<>(new String[] { "A", "B", "C" });
+        JPanel body = new JPanel(new BorderLayout(0, 12));
+        body.setBackground(BG);
+
+        JPanel form = new JPanel(new GridLayout(3, 2, 8, 10));
+        form.setBackground(BG);
+
+        JComboBox<String> who = new JComboBox<>(new String[] { "A", "B", "BOTH" });
         JTextField stmtA = new JTextField();
         JTextField stmtB = new JTextField();
-        styleCombo(who);
+        stmtB.setEnabled(false);
         styleField(stmtA);
         styleField(stmtB);
+        styleCombo(who);
 
-        form.add(label("Who speaks"));
+        form.add(goldLabel("Who speaks (A / B / BOTH):"));
         form.add(who);
-        form.add(label("Villager A says"));
+        form.add(goldLabel("A statement (A, B, !, n, v, I):"));
         form.add(stmtA);
-        form.add(label("Villager B says"));
+        form.add(goldLabel("B statement:"));
         form.add(stmtB);
-        form.add(label("Syntax"));
-        JLabel hint = label("A  B  !  n  v  IFF");
-        hint.setForeground(CYAN);
-        form.add(hint);
 
-        JPanel top = new JPanel(new BorderLayout(0, 10));
-        top.setBackground(BG);
-        top.add(titlePanel(), BorderLayout.NORTH);
-        top.add(form, BorderLayout.CENTER);
+        who.addActionListener(e -> {
+            String w = (String) who.getSelectedItem();
+            boolean a = w.equals("A") || w.equals("BOTH");
+            boolean b = w.equals("B") || w.equals("BOTH");
+            stmtA.setEnabled(a);
+            stmtB.setEnabled(b);
+            if (!a) {
+                stmtA.setText("");
+            }
+            if (!b) {
+                stmtB.setText("");
+            }
+        });
 
-        JTextArea output = new JTextArea(16, 58);
+        JTextPane output = new JTextPane();
         output.setEditable(false);
-        output.setBackground(new Color(10, 14, 26));
-        output.setForeground(TERMINAL);
-        output.setCaretColor(TERMINAL);
-        output.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 13));
-        output.setBorder(BorderFactory.createEmptyBorder(8, 10, 8, 10));
+        output.setBackground(BG);
+        output.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
+        output.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         JScrollPane scroll = new JScrollPane(output);
-        scroll.setBorder(BorderFactory.createTitledBorder(
-                BorderFactory.createLineBorder(CYAN, 1),
-                " Truth table ",
-                0,
-                0,
-                new Font(Font.SANS_SERIF, Font.BOLD, 12),
-                CYAN));
-        scroll.getViewport().setBackground(output.getBackground());
+        scroll.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(GOLD, 1),
+                BorderFactory.createLineBorder(GOLD, 1)));
+        scroll.getViewport().setBackground(BG);
 
         JButton solve = new JButton("SOLVE");
         solve.setBackground(GOLD);
-        solve.setForeground(new Color(35, 28, 8));
-        solve.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 15));
+        solve.setForeground(Color.BLACK);
+        solve.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 14));
         solve.setFocusPainted(false);
-        solve.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(255, 230, 140), 2),
-                BorderFactory.createEmptyBorder(10, 24, 10, 24)));
+        solve.setBorder(BorderFactory.createEmptyBorder(12, 0, 12, 0));
+        solve.setMaximumSize(new Dimension(Integer.MAX_VALUE, 48));
         solve.addActionListener(e -> runSolve(who, stmtA, stmtB, output));
 
-        JPanel bottom = new JPanel(new BorderLayout(0, 10));
-        bottom.setBackground(BG);
-        bottom.add(solve, BorderLayout.NORTH);
-        bottom.add(scroll, BorderLayout.CENTER);
+        body.add(form, BorderLayout.NORTH);
+        body.add(scroll, BorderLayout.CENTER);
 
-        root.add(top, BorderLayout.NORTH);
-        root.add(bottom, BorderLayout.CENTER);
+        JPanel center = new JPanel(new BorderLayout(0, 8));
+        center.setBackground(BG);
+        center.add(body, BorderLayout.CENTER);
+        center.add(solve, BorderLayout.SOUTH);
+
+        root.add(center, BorderLayout.CENTER);
         frame.setContentPane(root);
-
-        frame.setMinimumSize(new Dimension(620, 520));
+        frame.setMinimumSize(new Dimension(560, 520));
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
 
-    static JPanel titlePanel() {
-        JPanel p = new JPanel(new BorderLayout());
-        p.setBackground(BG);
-        JLabel title = new JLabel("KNAVE  &  KNIGHT", SwingConstants.CENTER);
-        title.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 26));
-        title.setForeground(GOLD);
-        JLabel sub = new JLabel("Knights speak truth  ·  Knaves always lie", SwingConstants.CENTER);
-        sub.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 12));
-        sub.setForeground(MUTED);
-        sub.setBorder(BorderFactory.createEmptyBorder(4, 0, 0, 0));
-        p.add(title, BorderLayout.NORTH);
-        p.add(sub, BorderLayout.CENTER);
-        return p;
-    }
-
-    static JLabel label(String text) {
+    static JLabel goldLabel(String text) {
         JLabel l = new JLabel(text);
-        l.setForeground(TEXT);
-        l.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 13));
+        l.setForeground(GOLD);
+        l.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
         return l;
     }
 
     static void styleField(JTextField f) {
-        f.setBackground(FIELD);
-        f.setForeground(TEXT);
-        f.setCaretColor(CYAN);
+        f.setBackground(FIELD_BG);
+        f.setForeground(GOLD);
+        f.setCaretColor(GOLD);
         f.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 13));
-        f.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(70, 90, 130)),
-                BorderFactory.createEmptyBorder(6, 8, 6, 8)));
+        f.setBorder(BorderFactory.createLineBorder(GOLD, 1));
     }
 
     static void styleCombo(JComboBox<?> c) {
-        c.setBackground(FIELD);
-        c.setForeground(TEXT);
-        c.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 13));
+        c.setBackground(FIELD_BG);
+        c.setForeground(GOLD);
+        c.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 13));
     }
 
-    static void runSolve(JComboBox<String> who, JTextField stmtA, JTextField stmtB, JTextArea output) {
+    static void runSolve(JComboBox<String> who, JTextField stmtA, JTextField stmtB, JTextPane output) {
         String mode = (String) who.getSelectedItem();
-        String a = stmtA.getText();
-        String b = stmtB.getText();
-        if ((mode.equals("A") || mode.equals("C")) && !Input.isReadable(a.replace(" ", ""))) {
-            output.setText(">>> Invalid statement for A.");
+        String a = Input.normalizeStatement(stmtA.getText());
+        String b = Input.normalizeStatement(stmtB.getText());
+        if ((mode.equals("A") || mode.equals("BOTH")) && !Input.isReadable(a)) {
+            showText(output, "Invalid statement for A.", GOLD);
             return;
         }
-        if ((mode.equals("B") || mode.equals("C")) && !Input.isReadable(b.replace(" ", ""))) {
-            output.setText(">>> Invalid statement for B.");
+        if ((mode.equals("B") || mode.equals("BOTH")) && !Input.isReadable(b)) {
+            showText(output, "Invalid statement for B.", GOLD);
             return;
         }
         Input.setPuzzle(mode, a, b);
         TruthTable.buildTruthTable();
         TruthTable.markValidRows();
-        String text = "=== TRUTH TABLE ===\n" + TruthTable.formatTable(false, null);
-        text += "\n=== SOLUTIONS HIGHLIGHTED ===\n" + TruthTable.formatTable(true, TruthTable.table);
+        String text = "TRUTH TABLE\n" + TruthTable.formatTable(false, null);
+        text += "\nTRUTH TABLE WITH SOLUTIONS HIGHLIGHTED\n";
+        text += TruthTable.formatTable(true, TruthTable.table);
         text += Verdict.formatVerdict(TruthTable.table);
-        output.setText(text);
-        output.setCaretPosition(0);
+        showColoredOutput(output, text);
+    }
+
+    static void showText(JTextPane pane, String text, Color color) {
+        StyledDocument doc = pane.getStyledDocument();
+        SimpleAttributeSet attr = new SimpleAttributeSet();
+        StyleConstants.setForeground(attr, color);
+        StyleConstants.setFontFamily(attr, Font.MONOSPACED);
+        try {
+            doc.remove(0, doc.getLength());
+            doc.insertString(0, text, attr);
+        } catch (Exception ignored) {
+        }
+    }
+
+    static void showColoredOutput(JTextPane pane, String text) {
+        StyledDocument doc = pane.getStyledDocument();
+        try {
+            doc.remove(0, doc.getLength());
+            for (int i = 0; i < text.length(); i++) {
+                char c = text.charAt(i);
+                SimpleAttributeSet attr = new SimpleAttributeSet();
+                StyleConstants.setFontFamily(attr, Font.MONOSPACED);
+                StyleConstants.setFontSize(attr, 12);
+                Color color = GOLD;
+                if (tableTf(text, i)) {
+                    color = c == 'T' ? GREEN : RED;
+                } else if (text.regionMatches(i, "YES", 0, 3)) {
+                    color = GREEN;
+                } else if (text.regionMatches(i, "no", 0, 2) && bordered(text, i, 2)) {
+                    color = RED;
+                } else if (text.regionMatches(i, "The puzzle is ambiguous.", 0, 26)) {
+                    color = ORANGE;
+                }
+                StyleConstants.setForeground(attr, color);
+                doc.insertString(doc.getLength(), String.valueOf(c), attr);
+            }
+        } catch (Exception ignored) {
+        }
+        pane.setCaretPosition(0);
+    }
+
+    static boolean tableTf(String text, int i) {
+        char c = text.charAt(i);
+        if (c != 'T' && c != 'F') {
+            return false;
+        }
+        return bordered(text, i, 1);
+    }
+
+    static boolean bordered(String text, int i, int len) {
+        boolean before = i == 0 || text.charAt(i - 1) == ' ';
+        boolean after = i + len >= text.length() || text.charAt(i + len) == ' ';
+        return before && after;
     }
 }

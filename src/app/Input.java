@@ -33,7 +33,7 @@ public class Input {
     static String askForStatement(String speaker) {
         String text;
         do {
-            System.out.print("Enter " + speaker + "'s statement (use A, B, !, n, v, IFF): ");
+            System.out.print("Enter " + speaker + "'s statement (use A, B, !, n, v, I or IFF): ");
             text = input.nextLine().replace(" ", "");
             if (!isReadable(text)) {
                 System.out.println("Could not understand that. Example: !An!B");
@@ -44,13 +44,25 @@ public class Input {
 
     public static void setPuzzle(String whoSpeaks, String stmtA, String stmtB) {
         String mode = whoSpeaks.toUpperCase();
+        if (mode.equals("BOTH")) {
+            mode = "C";
+        }
         speakerA = mode.equals("A") || mode.equals("C");
         speakerB = mode.equals("B") || mode.equals("C");
-        statementA = speakerA ? stmtA.replace(" ", "") : "";
-        statementB = speakerB ? stmtB.replace(" ", "") : "";
+        statementA = speakerA ? normalizeStatement(stmtA) : "";
+        statementB = speakerB ? normalizeStatement(stmtB) : "";
+    }
+
+    public static String normalizeStatement(String text) {
+        text = text.replace(" ", "");
+        if (!text.contains("IFF")) {
+            text = text.replace("I", "IFF");
+        }
+        return text;
     }
 
     public static boolean isReadable(String text) {
+        text = normalizeStatement(text);
         if (text.isEmpty()) {
             return false;
         }
