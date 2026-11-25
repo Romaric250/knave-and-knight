@@ -24,9 +24,12 @@ javac app/*.java
 java app.Main
 ```
 
+Opens a small Swing window: enter who speaks and statements, click **Solve**. Console: `java app.Main --cli`
+
 ## Layout
 
-- `Main.java` — runs the steps in order
+- `Main.java` — UI or `--cli`
+- `SimpleUI.java` — minimal input + output area
 - `Input.java` — tasks 1–2 (setup input)
 - `TruthTable.java` — task 3 (table + statement evaluation)
 - `Evaluation.java` — task 4 (knight/knave check per row)
