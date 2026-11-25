@@ -34,3 +34,6 @@ Opens a small Swing window: enter who speaks and statements, click **Solve**. Co
 - `TruthTable.java` — task 3 (table + statement evaluation)
 - `Evaluation.java` — task 4 (knight/knave check per row)
 - `Verdict.java` — tasks 5–6 (highlight + English verdict)
+
+
+![alt text](image.png)
