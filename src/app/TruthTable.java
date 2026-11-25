@@ -102,7 +102,7 @@ public class TruthTable {
         if (raw == null || raw.isEmpty()) {
             return parts;
         }
-        String[] atoms = raw.split("[nv]", -1);
+        String[] atoms = raw.split("(?:n|v|IFF)", -1);
         if (atoms.length > 1) {
             for (String atom : atoms) {
                 parts.add(atom);
@@ -147,11 +147,25 @@ public class TruthTable {
     static boolean evalAnd(String part, boolean aKnight, boolean bKnight) {
         String[] andParts = part.split("n", -1);
         for (String andPart : andParts) {
-            if (!evalAtom(andPart, aKnight, bKnight)) {
+            if (!evalImp(andPart, aKnight, bKnight)) {
                 return false;
             }
         }
         return true;
+    }
+
+    // IFF is implication: left IFF right means !left OR right
+    static boolean evalImp(String part, boolean aKnight, boolean bKnight) {
+        int idx = part.indexOf("IFF");
+        if (idx < 0) {
+            return evalAtom(part, aKnight, bKnight);
+        }
+        String left = part.substring(0, idx);
+        String right = part.substring(idx + 3);
+        if (left.isEmpty() || right.isEmpty()) {
+            return false;
+        }
+        return !evalImp(left, aKnight, bKnight) || evalImp(right, aKnight, bKnight);
     }
 
     static boolean evalAtom(String atom, boolean aKnight, boolean bKnight) {

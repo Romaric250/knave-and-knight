@@ -33,7 +33,7 @@ public class Input {
     static String askForStatement(String speaker) {
         String text;
         do {
-            System.out.print("Enter " + speaker + "'s statement (use A, B, !, n, v): ");
+            System.out.print("Enter " + speaker + "'s statement (use A, B, !, n, v, IFF): ");
             text = input.nextLine().replace(" ", "");
             if (!isReadable(text)) {
                 System.out.println("Could not understand that. Example: !An!B");
@@ -47,7 +47,7 @@ public class Input {
             return false;
         }
 
-        String[] pieces = text.split("[nv]", -1);
+        String[] pieces = text.split("(?:n|v|IFF)", -1);
         for (String piece : pieces) {
             if (!piece.matches("!?[AB]")) {
                 return false;
