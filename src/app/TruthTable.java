@@ -76,13 +76,13 @@ public class TruthTable {
         line.append(pad(tf(aKnight), 4)).append(pad(tf(bKnight), 4));
         if (Input.speakerA) {
             for (String part : stmtParts(Input.statementA)) {
-                line.append(pad(tf(evalAtom(part, aKnight, bKnight)), 8));
+                line.append(pad(tf(evalNot(part, aKnight, bKnight)), 8));
             }
             line.append(pad(tf(data[row][0]), 8));
         }
         if (Input.speakerB) {
             for (String part : stmtParts(Input.statementB)) {
-                line.append(pad(tf(evalAtom(part, aKnight, bKnight)), 8));
+                line.append(pad(tf(evalNot(part, aKnight, bKnight)), 8));
             }
             line.append(pad(tf(data[row][1]), 8));
         }
@@ -163,7 +163,7 @@ public class TruthTable {
     static boolean evalImp(String part, boolean aKnight, boolean bKnight) {
         int idx = part.indexOf("IFF");
         if (idx < 0) {
-            return evalAtom(part, aKnight, bKnight);
+            return evalNot(part, aKnight, bKnight);
         }
         String left = part.substring(0, idx);
         String right = part.substring(idx + 3);
@@ -173,14 +173,14 @@ public class TruthTable {
         return !evalImp(left, aKnight, bKnight) || evalImp(right, aKnight, bKnight);
     }
 
-    static boolean evalAtom(String atom, boolean aKnight, boolean bKnight) {
-        if (atom.startsWith("!")) {
-            return !evalAtom(atom.substring(1), aKnight, bKnight);
+    static boolean evalNot(String value, boolean aKnight, boolean bKnight) {
+        if (value.startsWith("!")) {
+            return !evalNot(value.substring(1), aKnight, bKnight);
         }
-        if (atom.equals("A")) {
+        if (value.equals("A")) {
             return aKnight;
         }
-        if (atom.equals("B")) {
+        if (value.equals("B")) {
             return bKnight;
         }
         return false;
