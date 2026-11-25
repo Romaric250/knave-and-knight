@@ -42,7 +42,15 @@ public class Input {
         return text;
     }
 
-    static boolean isReadable(String text) {
+    public static void setPuzzle(String whoSpeaks, String stmtA, String stmtB) {
+        String mode = whoSpeaks.toUpperCase();
+        speakerA = mode.equals("A") || mode.equals("C");
+        speakerB = mode.equals("B") || mode.equals("C");
+        statementA = speakerA ? stmtA.replace(" ", "") : "";
+        statementB = speakerB ? stmtB.replace(" ", "") : "";
+    }
+
+    public static boolean isReadable(String text) {
         if (text.isEmpty()) {
             return false;
         }

@@ -9,6 +9,10 @@ public class Verdict {
     }
 
     public static void printVerdict(boolean[][] table) {
+        System.out.print(formatVerdict(table));
+    }
+
+    public static String formatVerdict(boolean[][] table) {
         int count = 0;
         for (int i = 0; i < 4; i++) {
             if (table[i][2]) {
@@ -16,25 +20,26 @@ public class Verdict {
             }
         }
 
-        System.out.println();
+        StringBuilder sb = new StringBuilder("\n");
         if (count == 0) {
-            System.out.println("There is no solution.");
+            sb.append("There is no solution.\n");
         } else if (count == 1) {
             for (int i = 0; i < 4; i++) {
                 if (table[i][2]) {
-                    System.out.println("Solution: " + describe(i));
+                    sb.append("Solution: ").append(describe(i)).append('\n');
                     break;
                 }
             }
         } else {
-            System.out.println("There are " + count + " solutions:");
+            sb.append("There are ").append(count).append(" solutions:\n");
             for (int i = 0; i < 4; i++) {
                 if (table[i][2]) {
-                    System.out.println(" - " + describe(i));
+                    sb.append(" - ").append(describe(i)).append('\n');
                 }
             }
-            System.out.println("The puzzle is ambiguous.");
+            sb.append("The puzzle is ambiguous.\n");
         }
+        return sb.toString();
     }
 
     private static String describe(int row) {

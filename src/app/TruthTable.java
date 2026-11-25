@@ -29,13 +29,18 @@ public class TruthTable {
     }
 
     static void printTable(boolean showMatch, boolean[][] source) {
+        System.out.print(formatTable(showMatch, source));
+    }
+
+    static String formatTable(boolean showMatch, boolean[][] source) {
         boolean[][] data = source != null ? source : table;
-        String header = buildHeader(showMatch);
-        System.out.println(header);
+        StringBuilder sb = new StringBuilder();
+        sb.append(buildHeader(showMatch)).append('\n');
         for (int i = 0; i < 4; i++) {
             boolean valid = showMatch && data[i][2];
-            System.out.println(buildRow(i, showMatch, valid, data));
+            sb.append(buildRow(i, showMatch, valid, data)).append('\n');
         }
+        return sb.toString();
     }
 
     static String buildHeader(boolean showMatch) {
