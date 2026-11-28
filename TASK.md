@@ -46,6 +46,3 @@ One solution: print it in plain English, e.g. "A is a knave and B is a knight."
 Several solutions: list them all and say the puzzle is ambiguous.
 Done when: all three outcomes print a clear sentence.
 
-
-Ouput
-![alt text](image.png)
