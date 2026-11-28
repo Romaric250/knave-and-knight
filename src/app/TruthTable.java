@@ -107,10 +107,10 @@ public class TruthTable {
         if (raw == null || raw.isEmpty()) {
             return parts;
         }
-        String[] atoms = raw.split("(?:n|v|IFF)", -1);
-        if (atoms.length > 1) {
-            for (String atom : atoms) {
-                parts.add(atom);
+        String[] secsChar = raw.split("(?:n|v|IFF)", -1);
+        if (secsChar.length > 1) {
+            for (String sec : secsChar) {
+                parts.add(sec);
             }
         }
         return parts;
